@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Drive // System</title>
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --dark-bg: #050505;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace; /* Fuente hacker */
+            background-color: var(--dark-bg);
+            color: var(--neon-cyan);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ================= ESTRELLAS GENERADAS POR CSS (SIN IMAGENES) ================= */
+        /* Creamos puntos blancos aleatorios usando sombras */
+        
+        .stars-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0; transform: translateY(0); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-100px); }
+        }
+
+        /* ================= PLANETA CYBERPUNK (HECHO CON CSS) ================= */
+        
+        .cyber-planet-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            z-index: -1;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.4; /* Sutil en el fondo */
+        }
+
+        .cyber-planet {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: 
+                /* Gradiente circular para dar volumen */
+                radial-gradient(circle at 30% 30%, rgba(0, 243, 255, 0.05), transparent 70%),
+                /* La rejilla tecnológica */
+                linear-gradient(rgba(0, 243, 255, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.2) 1px, transparent 1px);
+            
+            background-size: 100% 100%, 40px 40px, 40px 40px; /* Tamaño de la rejilla */
+            
+            /* Brillo exterior e interior */
+            box-shadow: 
+                inset 0 0 60px rgba(0, 243, 255, 0.3), /* Brillo interno */
+                0 0 20px rgba(0, 243, 255, 0.2);       /* Brillo externo */
+            
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            
+            /* Animación de rotación de la rejilla */
+            animation: planetRotate 20s linear infinite;
+        }
+
+        @keyframes planetRotate {
+            0% { background-position: 0 0, 0 0, 0 0; transform: rotate(0deg); }
+            100% { background-position: 0 0, 40px 40px, 40px 40px; transform: rotate(360deg); }
+        }
+
+        /* ================= INTERFAZ ================= */
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(10, 15, 20, 0.6); /* Muy transparente */
+            backdrop-filter: blur(5px);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--neon-cyan);
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.8);
+            font-weight: normal;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            color: var(--neon-cyan);
+            border-radius: 4px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        button {
+            padding: 15px 30px;
+            background: transparent;
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        /* Video Area */
+        #playerArea {
+            margin-top: 30px;
+            display: none;
+            border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            background: black;
+            position: relative;
+        }
+        
+        video, iframe { width: 100%; display: block; max-height: 60vh; border:none; }
+        
+        .copy-btn {
+            position: absolute; top: 10px; right: 10px; z-index: 10;
+            background: black; border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
+            padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px;
+        }
+        .copy-success { background: var(--neon-cyan); color: black; }
+        
+        #messageBox { margin-top: 20px; display: none; padding: 10px; border: 1px solid var(--neon-cyan); text-align: center; }
+
+    </style>
+</head>
+<body>
+
+    <div class="stars-container" id="starField"></div>
+    <div class="cyber-planet-container">
+        <div class="cyber-planet"></div>
+    </div>
+
+    <div class="container">
+        <h2>SYSTEM_DRIVE // STREAMER</h2>
+        
+        <div class="input-group">
+            <input type="text" id="driveLink" placeholder="> Insertar Enlace Google Drive...">
+            <button onclick="startPlayer()">[EJECUTAR]</button>
+        </div>
+
+        <div id="messageBox"></div>
+
+        <div id="playerArea">
+            <div class="copy-btn" onclick="copyLink(this)">
+                <span>COPIAR LINK</span>
+            </div>
+            <video id="vidHTML5" controls playsinline controlsList="nodownload"></video>
+            <iframe id="vidIframe" style="display:none;" allow="autoplay; fullscreen"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // --- SCRIPT DE ESTRELLAS AUTOMÁTICAS ---
+        const starField = document.getElementById('starField');
+        for(let i=0; i<100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            // Posición aleatoria
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            // Tamaño aleatorio
+            const size = Math.random() * 3 + 'px';
+            star.style.width = size;
+            star.style.height = size;
+            // Duración de animación aleatoria
+            star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+            // Retraso aleatorio
+            star.style.animationDelay = (Math.random() * 5) + 's';
+            starField.appendChild(star);
+        }
+
+        // --- TU API KEY (CONFIGURACIÓN) ---
+        const API_KEY = "AIzaSyBkhD7NJwQagQlSDSjbWJfiDzuXCU9T_wI"; 
+
+        // --- LÓGICA DEL REPRODUCTOR ---
+        let currentDirectLink = "";
+
+        function extractId(url) {
+            const match = url.match(/(?:\/d\/|id=)([-a-zA-Z0-9_]+)/);
+            return match ? match[1] : null;
+        }
+
+        function showMessage(text) {
+            const box = document.getElementById('messageBox');
+            box.innerHTML = text;
+            box.style.display = 'block';
+        }
+
+        function startPlayer() {
+            const urlInput = document.getElementById('driveLink').value;
+            const playerArea = document.getElementById('playerArea');
+            const video = document.getElementById('vidHTML5');
+            const iframe = document.getElementById('vidIframe');
+            const msgBox = document.getElementById('messageBox');
+
+            // Reset
+            msgBox.style.display = 'none';
+            playerArea.style.display = 'none';
+            video.style.display = 'none';
+            iframe.style.display = 'none';
+            video.pause();
+            video.removeAttribute('src');
+
+            const fileId = extractId(urlInput);
+            if (!fileId) {
+                showMessage("> ERROR: ID NO VÁLIDO");
+                return;
+            }
+
+            showMessage("> PROCESANDO DATOS...");
+
+            currentDirectLink = `https://www.googleapis.com/drive/v3/files/${fileId}?
